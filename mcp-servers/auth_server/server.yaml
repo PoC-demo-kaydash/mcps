@@ -1,0 +1,149 @@
+name: auth_server
+version: 1.0.0
+description: 사용자 인증 및 권한 관리 Tool 제공
+
+# 서버 정보
+server:
+  type: mcp
+  protocol: stdio
+  language: python
+  main_file: main.py
+  class_name: AuthServer
+
+# 제공하는 Tool 목록
+tools:
+  - name: authenticate
+    description: 사용자 인증 및 JWT 토큰 발급
+    category: auth
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: password
+        type: string
+        required: true
+        description: 비밀번호
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+        user_info:
+          type: object
+
+  - name: request_access
+    description: 문서 접근 권한 요청
+    category: auth
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 요청자 ID
+      - name: doc_id
+        type: string
+        required: true
+        description: 문서 ID
+      - name: reason
+        type: string
+        required: false
+        description: 요청 사유
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+        request_id:
+          type: string
+
+  - name: approve_access
+    description: 접근 권한 요청 승인/거부
+    category: auth
+    parameters:
+      - name: approver_id
+        type: string
+        required: true
+        description: 승인자 ID
+      - name: request_id
+        type: string
+        required: true
+        description: 요청 ID
+      - name: approved
+        type: boolean
+        required: true
+        description: 승인 여부
+      - name: comment
+        type: string
+        required: false
+        description: 승인/거부 의견
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+  - name: get_my_permissions
+    description: 현재 사용자의 권한 목록 조회
+    category: auth
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+    returns:
+      type: object
+      properties:
+        role:
+          type: string
+        permissions:
+          type: array
+        team:
+          type: string
+
+# 의존성
+dependencies:
+  python: ">=3.10"
+  packages:
+    - pymysql==1.1.0
+    - python-jose[cryptography]==3.3.0
+    - passlib[bcrypt]==1.7.4
+    - pydantic==2.5.3
+
+# 필요한 공유 모듈
+shared_modules:
+  - shared.database
+  - shared.mcp_protocol
+  - shared.logging_config
+  - shared.permissions
+  - mcp_tools.core.auth_tools
+
+# 환경 변수
+environment:
+  - MARIADB_HOST
+  - MARIADB_PORT
+  - MARIADB_USER
+  - MARIADB_PASSWORD
+  - MARIADB_DATABASE
+  - JWT_SECRET_KEY
+  - JWT_ALGORITHM
+  - JWT_EXPIRATION_MINUTES
+
+# 로그 설정
+logging:
+  level: INFO
+  file: data/logs/mcp-servers/auth_server.log
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 성능 지표
+performance:
+  startup_time: "<1s"
+  avg_response_time: "<200ms"
+  max_memory: "256MB"
+
+# 헬스체크
+health_check:
+  enabled: true
+  interval: 30
+  timeout: 5

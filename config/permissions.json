@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0",
+  "roles": {
+    "junior": {
+      "description": "신입 사원",
+      "level": 1,
+      "document": {
+        "public": ["read"],
+        "team": [],
+        "confidential": []
+      },
+      "tools": {
+        "allowed": [
+          "search_documents",
+          "get_document",
+          "list_documents"
+        ],
+        "denied": []
+      },
+      "admin": []
+    },
+    "staff": {
+      "description": "일반 사원",
+      "level": 2,
+      "document": {
+        "public": ["read", "create", "update"],
+        "team": ["read", "create", "update"],
+        "confidential": []
+      },
+      "tools": {
+        "allowed": [
+          "search_documents",
+          "get_document",
+          "list_documents",
+          "create_document",
+          "update_document",
+          "get_document_versions"
+        ],
+        "denied": []
+      },
+      "admin": []
+    },
+    "manager": {
+      "description": "팀 관리자",
+      "level": 3,
+      "document": {
+        "public": ["read", "create", "update", "delete"],
+        "team": ["read", "create", "update", "delete"],
+        "confidential": []
+      },
+      "tools": {
+        "allowed": ["*"],
+        "denied": ["get_audit_logs"]
+      },
+      "admin": ["approve_access_request"]
+    },
+    "executive": {
+      "description": "임원",
+      "level": 4,
+      "document": {
+        "public": ["read"],
+        "team": ["read"],
+        "confidential": ["read"]
+      },
+      "tools": {
+        "allowed": ["*"],
+        "denied": ["get_audit_logs"]
+      },
+      "admin": []
+    },
+    "admin": {
+      "description": "시스템 관리자",
+      "level": 5,
+      "document": {
+        "all": ["read", "create", "update", "delete"]
+      },
+      "tools": {
+        "allowed": ["*"],
+        "denied": []
+      },
+      "admin": ["*"]
+    }
+  },
+  "document_classifications": {
+    "public": {
+      "description": "공개 문서",
+      "color": "#28a745",
+      "min_role_level": 1
+    },
+    "team": {
+      "description": "팀 문서",
+      "color": "#ffc107",
+      "min_role_level": 2,
+      "team_restriction": true
+    },
+    "confidential": {
+      "description": "기밀 문서",
+      "color": "#dc3545",
+      "min_role_level": 4
+    }
+  },
+  "special_permissions": [
+    {
+      "user_id": "U001",
+      "permissions": ["document:DOC999:read"],
+      "reason": "특별 승인",
+      "granted_by": "U000",
+      "granted_at": "2026-01-01T00:00:00Z",
+      "expires_at": "2026-12-31T23:59:59Z"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# Frontend Docker Compose
+# Reflex 애플리케이션 컨테이너 설정
+
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    container_name: mcp-frontend
+    ports:
+      - "3000:3000"  # Frontend
+      - "8000:8000"  # Backend API
+    environment:
+      - API_GATEWAY_URL=http://api-gateway:8080
+      - REFLEX_BACKEND_PORT=8000
+      - REFLEX_FRONTEND_PORT=3000
+      - ENV=production
+    volumes:
+      - ./frontend:/app/frontend
+    depends_on:
+      - api-gateway
+    networks:
+      - mcp-network
+    restart: unless-stopped
+
+networks:
+  mcp-network:
+    external: true

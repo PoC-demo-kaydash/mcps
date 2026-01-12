@@ -1,0 +1,89 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "index": {
+      "sort.field": "created_at",
+      "sort.order": "desc"
+    }
+  },
+  "mappings": {
+    "properties": {
+      "log_id": {
+        "type": "keyword",
+        "doc_values": true
+      },
+      "user_id": {
+        "type": "keyword"
+      },
+      "username": {
+        "type": "keyword"
+      },
+      "action": {
+        "type": "keyword"
+      },
+      "resource_type": {
+        "type": "keyword"
+      },
+      "resource_id": {
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "ip_address": {
+        "type": "ip"
+      },
+      "user_agent": {
+        "type": "text",
+        "index": false
+      },
+      "details": {
+        "type": "object",
+        "enabled": false
+      },
+      "request": {
+        "properties": {
+          "method": {
+            "type": "keyword"
+          },
+          "path": {
+            "type": "keyword"
+          },
+          "query_params": {
+            "type": "object",
+            "enabled": false
+          },
+          "body_preview": {
+            "type": "text",
+            "index": false
+          }
+        }
+      },
+      "response": {
+        "properties": {
+          "status_code": {
+            "type": "integer"
+          },
+          "duration_ms": {
+            "type": "integer"
+          },
+          "error_message": {
+            "type": "text",
+            "index": false
+          }
+        }
+      },
+      "session_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  },
+  "aliases": {
+    "mcps_audit_logs_current": {}
+  }
+}

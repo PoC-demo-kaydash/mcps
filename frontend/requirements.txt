@@ -1,0 +1,14 @@
+# Frontend Requirements
+# Python 의존성
+
+# Reflex Framework
+reflex==0.4.0
+
+# HTTP Client
+httpx==0.25.2
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Async Support
+asyncio==3.4.3

@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "users": [
+    {
+      "id": "U000",
+      "name": "관리자",
+      "email": "admin@company.com",
+      "role": "admin",
+      "team": null,
+      "department": "IT팀",
+      "position": "시스템 관리자",
+      "created_at": "2020-01-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U001",
+      "name": "김신입",
+      "email": "junior@company.com",
+      "role": "junior",
+      "team": "dev_team",
+      "department": "개발팀",
+      "position": "사원",
+      "created_at": "2026-01-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U002",
+      "name": "이사원",
+      "email": "staff@company.com",
+      "role": "staff",
+      "team": "dev_team",
+      "department": "개발팀",
+      "position": "대리",
+      "created_at": "2025-01-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U003",
+      "name": "박매니저",
+      "email": "manager@company.com",
+      "role": "manager",
+      "team": "dev_team",
+      "department": "개발팀",
+      "position": "과장",
+      "created_at": "2024-01-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U004",
+      "name": "최임원",
+      "email": "executive@company.com",
+      "role": "executive",
+      "team": null,
+      "department": "경영진",
+      "position": "이사",
+      "created_at": "2020-01-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U005",
+      "name": "정사원",
+      "email": "staff2@company.com",
+      "role": "staff",
+      "team": "hr_team",
+      "department": "인사팀",
+      "position": "대리",
+      "created_at": "2025-06-01T00:00:00Z",
+      "active": true
+    },
+    {
+      "id": "U006",
+      "name": "강대리",
+      "email": "staff3@company.com",
+      "role": "staff",
+      "team": "finance_team",
+      "department": "재무팀",
+      "position": "대리",
+      "created_at": "2025-03-01T00:00:00Z",
+      "active": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "dev_team",
+      "name": "개발팀",
+      "description": "소프트웨어 개발",
+      "manager_id": "U003",
+      "members": ["U001", "U002", "U003"]
+    },
+    {
+      "id": "hr_team",
+      "name": "인사팀",
+      "description": "인사 관리",
+      "manager_id": null,
+      "members": ["U005"]
+    },
+    {
+      "id": "finance_team",
+      "name": "재무팀",
+      "description": "재무 관리",
+      "manager_id": null,
+      "members": ["U006"]
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "max_result_window": 10000,
+    "analysis": {
+      "analyzer": {
+        "nori": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech",
+            "nori_readingform"
+          ]
+        },
+        "nori_mixed": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech",
+            "nori_readingform",
+            "edge_ngram_filter"
+          ]
+        }
+      },
+      "tokenizer": {
+        "nori_tokenizer": {
+          "type": "nori_tokenizer",
+          "decompound_mode": "mixed",
+          "discard_punctuation": true
+        }
+      },
+      "filter": {
+        "nori_part_of_speech": {
+          "type": "nori_part_of_speech",
+          "stoptags": [
+            "E",
+            "IC",
+            "J",
+            "MAG",
+            "MAJ",
+            "MM",
+            "SP",
+            "SSC",
+            "SSO",
+            "SC",
+            "SE",
+            "XPN",
+            "XSA",
+            "XSN",
+            "XSV",
+            "UNA",
+            "NA",
+            "VSV"
+          ]
+        },
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "doc_id": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "nori",
+        "search_analyzer": "nori",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "suggest": {
+            "type": "text",
+            "analyzer": "nori_mixed"
+          }
+        }
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "nori",
+        "search_analyzer": "nori",
+        "term_vector": "with_positions_offsets"
+      },
+      "classification": {
+        "type": "keyword"
+      },
+      "category": {
+        "type": "keyword"
+      },
+      "author_id": {
+        "type": "keyword"
+      },
+      "author_name": {
+        "type": "text",
+        "analyzer": "nori",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "team": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "updated_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "version": {
+        "type": "integer"
+      },
+      "file_path": {
+        "type": "keyword",
+        "index": false
+      },
+      "file_size": {
+        "type": "long"
+      },
+      "view_count": {
+        "type": "integer"
+      }
+    }
+  }
+}

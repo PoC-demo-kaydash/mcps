@@ -1,0 +1,7 @@
+# mcp-servers/core/search_server/requirements.txt
+# Search Server 의존성
+
+# 프로젝트 공통 의존성은 루트 requirements.txt 참조
+# Server 특화 의존성만 여기 추가
+
+# (현재 추가 의존성 없음)

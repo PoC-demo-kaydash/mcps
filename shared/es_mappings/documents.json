@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "analyzer": {
+        "korean": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "nori_readingform",
+            "lowercase",
+            "nori_part_of_speech_basic"
+          ]
+        },
+        "korean_search": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "nori_readingform",
+            "lowercase",
+            "synonym_filter"
+          ]
+        }
+      },
+      "filter": {
+        "nori_part_of_speech_basic": {
+          "type": "nori_part_of_speech",
+          "stoptags": [
+            "E", "IC", "J", "MAG", "MAJ",
+            "MM", "SP", "SSC", "SSO", "SC",
+            "SE", "XPN", "XSA", "XSN", "XSV"
+          ]
+        },
+        "synonym_filter": {
+          "type": "synonym",
+          "lenient": true,
+          "synonyms": [
+            "문서, 서류, 파일",
+            "회의, 미팅",
+            "보고서, 리포트",
+            "개발, 프로그래밍, 코딩",
+            "테스트, 검증, 시험",
+            "배포, 릴리즈, 출시"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "doc_id": {
+        "type": "keyword",
+        "doc_values": true
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "korean",
+        "search_analyzer": "korean_search",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 500
+          },
+          "suggest": {
+            "type": "completion",
+            "analyzer": "simple"
+          }
+        }
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "korean",
+        "search_analyzer": "korean_search",
+        "term_vector": "with_positions_offsets"
+      },
+      "summary": {
+        "type": "text",
+        "analyzer": "korean"
+      },
+      "author_id": {
+        "type": "keyword"
+      },
+      "author_name": {
+        "type": "keyword"
+      },
+      "classification": {
+        "type": "keyword"
+      },
+      "classification_level": {
+        "type": "integer"
+      },
+      "doc_type": {
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "department": {
+        "type": "keyword"
+      },
+      "file_path": {
+        "type": "keyword",
+        "index": false
+      },
+      "file_size": {
+        "type": "long"
+      },
+      "version": {
+        "type": "integer"
+      },
+      "created_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "updated_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "metadata": {
+        "type": "object",
+        "enabled": false
+      }
+    }
+  }
+}

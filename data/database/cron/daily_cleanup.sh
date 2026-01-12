@@ -1,0 +1,1 @@
+../../scripts/manage/cleanup.sh

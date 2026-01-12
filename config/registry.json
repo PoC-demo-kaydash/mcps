@@ -1,0 +1,410 @@
+{
+  "version": "1.1.0",
+  "updated_at": "2026-01-08T15:00:00Z",
+  "description": "MCP Tool Registry - SR.md와 동기화됨",
+  "tools": [
+    {
+      "name": "search_documents",
+      "description": "문서 전문 검색",
+      "category": "search",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "search_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "검색어"
+          },
+          "classification": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["public", "team", "confidential"]
+            },
+            "description": "문서 등급 필터"
+          },
+          "category": {
+            "type": "string",
+            "description": "카테고리 필터"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": ["query"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "doc_id": {"type": "string"},
+                "title": {"type": "string"},
+                "snippet": {"type": "string"},
+                "classification": {"type": "string"},
+                "score": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "name": "공개 문서 검색",
+          "input": {
+            "query": "예산",
+            "classification": ["public"],
+            "limit": 10
+          },
+          "output": {
+            "total": 5,
+            "results": [
+              {
+                "doc_id": "DOC001",
+                "title": "2026년 예산 계획",
+                "snippet": "...예산...",
+                "classification": "public",
+                "score": 8.5
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_document",
+      "description": "문서 상세 조회",
+      "category": "document",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "document_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "description": "문서 ID"
+          }
+        },
+        "required": ["doc_id"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "title": {"type": "string"},
+          "content": {"type": "string"},
+          "classification": {"type": "string"},
+          "author_id": {"type": "string"},
+          "created_at": {"type": "string"},
+          "updated_at": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "create_document",
+      "description": "문서 생성",
+      "category": "document",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "document_server",
+      "enabled": true,
+      "required_permissions": ["document:create"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "content": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["public", "team", "confidential"]
+          },
+          "category": {
+            "type": "string"
+          }
+        },
+        "required": ["title", "content", "classification"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "message": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "update_document",
+      "description": "문서 수정",
+      "category": "document",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "document_server",
+      "enabled": true,
+      "required_permissions": ["document:update"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "title": {"type": "string"},
+          "content": {"type": "string"},
+          "classification": {"type": "string"}
+        },
+        "required": ["doc_id"]
+      }
+    },
+    {
+      "name": "delete_document",
+      "description": "문서 삭제",
+      "category": "document",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "document_server",
+      "enabled": true,
+      "required_permissions": ["document:delete"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"}
+        },
+        "required": ["doc_id"]
+      }
+    },
+    {
+      "name": "list_documents",
+      "description": "문서 목록 조회",
+      "category": "document",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "document_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "classification": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "category": {"type": "string"},
+          "limit": {"type": "integer", "default": 20},
+          "offset": {"type": "integer", "default": 0}
+        }
+      }
+    },
+    {
+      "name": "get_document_versions",
+      "description": "문서 버전 히스토리 조회",
+      "category": "version",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "version_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"}
+        },
+        "required": ["doc_id"]
+      }
+    },
+    {
+      "name": "authenticate",
+      "description": "사용자 인증 (PoC에서는 선택만)",
+      "category": "auth",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "auth_server",
+      "enabled": true,
+      "required_permissions": [],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "user_id": {"type": "string"}
+        },
+        "required": ["user_id"]
+      }
+    },
+    {
+      "name": "request_access",
+      "description": "문서 접근 권한 요청",
+      "category": "auth",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "auth_server",
+      "enabled": true,
+      "required_permissions": [],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "reason": {"type": "string"}
+        },
+        "required": ["doc_id", "reason"]
+      }
+    },
+    {
+      "name": "get_audit_logs",
+      "description": "감사 로그 조회",
+      "category": "audit",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "audit_server",
+      "enabled": true,
+      "required_permissions": ["admin:audit"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "user_id": {"type": "string"},
+          "action": {"type": "string"},
+          "start_date": {"type": "string", "format": "date"},
+          "end_date": {"type": "string", "format": "date"},
+          "limit": {"type": "integer", "default": 100, "maximum": 1000}
+        }
+      }
+    },
+    {
+      "name": "suggest_documents",
+      "description": "문서 제목 자동완성",
+      "category": "search",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "search_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "prefix": {"type": "string", "minLength": 1},
+          "limit": {"type": "integer", "default": 5, "maximum": 20}
+        },
+        "required": ["prefix"]
+      }
+    },
+    {
+      "name": "approve_access",
+      "description": "접근 권한 요청 승인/거부",
+      "category": "auth",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "auth_server",
+      "enabled": true,
+      "required_permissions": ["admin:approve"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "request_id": {"type": "integer"},
+          "action": {"type": "string", "enum": ["approve", "reject"]},
+          "comment": {"type": "string"}
+        },
+        "required": ["request_id", "action"]
+      }
+    },
+    {
+      "name": "get_my_permissions",
+      "description": "내 권한 목록 조회",
+      "category": "auth",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "auth_server",
+      "enabled": true,
+      "required_permissions": [],
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_document_version",
+      "description": "특정 버전 문서 내용 조회",
+      "category": "version",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "version_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "version": {"type": "integer", "minimum": 1}
+        },
+        "required": ["doc_id", "version"]
+      }
+    },
+    {
+      "name": "compare_versions",
+      "description": "두 버전 비교 (diff)",
+      "category": "version",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "version_server",
+      "enabled": true,
+      "required_permissions": ["document:read"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {"type": "string"},
+          "version1": {"type": "integer"},
+          "version2": {"type": "integer"}
+        },
+        "required": ["doc_id", "version1", "version2"]
+      }
+    },
+    {
+      "name": "get_my_activity",
+      "description": "내 활동 로그 조회",
+      "category": "audit",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "audit_server",
+      "enabled": true,
+      "required_permissions": [],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "days": {"type": "integer", "default": 7, "maximum": 90},
+          "limit": {"type": "integer", "default": 50, "maximum": 200}
+        }
+      }
+    },
+    {
+      "name": "get_statistics",
+      "description": "시스템 통계 조회",
+      "category": "audit",
+      "department": "core",
+      "version": "1.0.0",
+      "server": "audit_server",
+      "enabled": true,
+      "required_permissions": ["admin:audit"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "period": {"type": "string", "enum": ["day", "week", "month"], "default": "week"}
+        }
+      }
+    }
+  ]
+}

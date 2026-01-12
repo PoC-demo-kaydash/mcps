@@ -1,0 +1,177 @@
+name: audit_server
+version: 1.0.0
+description: 감사 로그 조회 및 분석 Tool 제공
+
+# 서버 정보
+server:
+  type: mcp
+  protocol: stdio
+  language: python
+  main_file: main.py
+  class_name: AuditServer
+
+# 제공하는 Tool 목록
+tools:
+  - name: get_audit_logs
+    description: 감사 로그 조회 (관리자용)
+    category: audit
+    parameters:
+      - name: admin_id
+        type: string
+        required: true
+        description: 관리자 ID
+      - name: user_id
+        type: string
+        required: false
+        description: 대상 사용자 ID 필터
+      - name: action
+        type: string
+        required: false
+        description: 액션 타입 필터
+      - name: resource_type
+        type: string
+        required: false
+        description: 리소스 타입 필터
+      - name: from_date
+        type: string
+        required: false
+        description: 시작 날짜 (YYYY-MM-DD)
+      - name: to_date
+        type: string
+        required: false
+        description: 종료 날짜 (YYYY-MM-DD)
+      - name: page
+        type: integer
+        required: false
+        description: 페이지 번호 (기본 1)
+      - name: page_size
+        type: integer
+        required: false
+        description: 페이지 크기 (기본 50)
+    returns:
+      type: object
+      properties:
+        logs:
+          type: array
+          description: 감사 로그 목록
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+
+  - name: get_my_activity
+    description: 내 활동 로그 조회 (일반 사용자용)
+    category: audit
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: from_date
+        type: string
+        required: false
+        description: 시작 날짜 (YYYY-MM-DD)
+      - name: to_date
+        type: string
+        required: false
+        description: 종료 날짜 (YYYY-MM-DD)
+      - name: limit
+        type: integer
+        required: false
+        description: 최대 개수 (기본 100)
+    returns:
+      type: object
+      properties:
+        user_id:
+          type: string
+        logs:
+          type: array
+          description: 활동 로그 목록
+        total:
+          type: integer
+
+  - name: get_statistics
+    description: 감사 로그 통계 (관리자용)
+    category: audit
+    parameters:
+      - name: admin_id
+        type: string
+        required: true
+        description: 관리자 ID
+      - name: metric
+        type: string
+        required: true
+        description: 통계 지표 (actions_by_user, actions_by_type, resource_access)
+      - name: from_date
+        type: string
+        required: false
+        description: 시작 날짜 (YYYY-MM-DD)
+      - name: to_date
+        type: string
+        required: false
+        description: 종료 날짜 (YYYY-MM-DD)
+    returns:
+      type: object
+      properties:
+        metric:
+          type: string
+        data:
+          type: object
+          description: 통계 데이터
+        period:
+          type: object
+
+# 의존성
+dependencies:
+  python: ">=3.10"
+  packages:
+    - pymysql==1.1.0
+    - elasticsearch==8.11.1
+    - pydantic==2.5.3
+
+# 필요한 공유 모듈
+shared_modules:
+  - shared.database
+  - shared.elasticsearch
+  - shared.mcp_protocol
+  - shared.logging_config
+  - shared.permissions
+  - mcp_tools.core.audit_tools
+
+# 환경 변수
+environment:
+  - MARIADB_HOST
+  - MARIADB_PORT
+  - MARIADB_USER
+  - MARIADB_PASSWORD
+  - MARIADB_DATABASE
+  - ES_HOST
+  - ES_USER
+  - ES_PASSWORD
+  - ES_INDEX_PREFIX
+
+# 로그 설정
+logging:
+  level: INFO
+  file: data/logs/mcp-servers/audit_server.log
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 성능 지표
+performance:
+  startup_time: "<1s"
+  avg_response_time: "<300ms"
+  max_memory: "256MB"
+
+# 감사 로그 설정
+audit:
+  retention_days: 365
+  max_query_size: 1000
+  index_name: mcps_audit_logs
+
+# 헬스체크
+health_check:
+  enabled: true
+  interval: 30
+  timeout: 5

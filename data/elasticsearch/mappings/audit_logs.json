@@ -1,0 +1,80 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "index": {
+      "refresh_interval": "5s",
+      "max_result_window": 10000
+    }
+  },
+  "mappings": {
+    "properties": {
+      "user_id": {
+        "type": "keyword"
+      },
+      "user_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "action": {
+        "type": "keyword"
+      },
+      "action_description": {
+        "type": "text"
+      },
+      "resource_type": {
+        "type": "keyword"
+      },
+      "resource_id": {
+        "type": "keyword"
+      },
+      "resource_title": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "details": {
+        "type": "object",
+        "enabled": true
+      },
+      "result": {
+        "type": "keyword"
+      },
+      "error_message": {
+        "type": "text"
+      },
+      "ip_address": {
+        "type": "ip"
+      },
+      "user_agent": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "request_id": {
+        "type": "keyword"
+      },
+      "execution_time_ms": {
+        "type": "integer"
+      },
+      "timestamp": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "created_at": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}

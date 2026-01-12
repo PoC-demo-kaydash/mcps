@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "servers": [
+    {
+      "name": "auth_server",
+      "description": "인증 및 권한 관리",
+      "path": "/app/poc/mcps/mcp-servers/auth_server",
+      "python": "/app/miniconda3/envs/mcp_env/bin/python",
+      "main": "main.py",
+      "enabled": true,
+      "auto_start": true,
+      "restart_on_failure": true,
+      "max_restarts": 3,
+      "env": {
+        "PYTHONPATH": "/app/poc/mcps",
+        "LOG_LEVEL": "INFO"
+      },
+      "timeout": 30,
+      "health_check": {
+        "enabled": true,
+        "interval": 60,
+        "timeout": 5
+      }
+    },
+    {
+      "name": "search_server",
+      "description": "문서 검색",
+      "path": "/app/poc/mcps/mcp-servers/search_server",
+      "python": "/app/miniconda3/envs/mcp_env/bin/python",
+      "main": "main.py",
+      "enabled": true,
+      "auto_start": true,
+      "restart_on_failure": true,
+      "max_restarts": 3,
+      "env": {
+        "PYTHONPATH": "/app/poc/mcps",
+        "LOG_LEVEL": "INFO"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "document_server",
+      "description": "문서 CRUD",
+      "path": "/app/poc/mcps/mcp-servers/document_server",
+      "python": "/app/miniconda3/envs/mcp_env/bin/python",
+      "main": "main.py",
+      "enabled": true,
+      "auto_start": true,
+      "restart_on_failure": true,
+      "max_restarts": 3,
+      "env": {
+        "PYTHONPATH": "/app/poc/mcps",
+        "LOG_LEVEL": "INFO"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "version_server",
+      "description": "문서 버전 관리",
+      "path": "/app/poc/mcps/mcp-servers/version_server",
+      "python": "/app/miniconda3/envs/mcp_env/bin/python",
+      "main": "main.py",
+      "enabled": true,
+      "auto_start": true,
+      "restart_on_failure": true,
+      "max_restarts": 3,
+      "env": {
+        "PYTHONPATH": "/app/poc/mcps",
+        "LOG_LEVEL": "INFO"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "audit_server",
+      "description": "감사 로그",
+      "path": "/app/poc/mcps/mcp-servers/audit_server",
+      "python": "/app/miniconda3/envs/mcp_env/bin/python",
+      "main": "main.py",
+      "enabled": true,
+      "auto_start": true,
+      "restart_on_failure": true,
+      "max_restarts": 3,
+      "env": {
+        "PYTHONPATH": "/app/poc/mcps",
+        "LOG_LEVEL": "INFO"
+      },
+      "timeout": 30
+    }
+  ]
+}

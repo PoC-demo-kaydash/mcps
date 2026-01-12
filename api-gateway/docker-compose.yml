@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8080
+      - MCP_HOST_URL=http://mcp-host:8000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=mcps_db
+      - DB_USER=mcps_user
+      - DB_PASSWORD=${DB_PASSWORD:-mcps_password}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-change-me-in-production}
+      - RATE_LIMIT_ENABLED=true
+      - CACHE_ENABLED=true
+    depends_on:
+      - redis
+      - mariadb
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8080/health', timeout=5.0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: mcp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: mcp-mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_password}
+      - MYSQL_DATABASE=mcps_db
+      - MYSQL_USER=mcps_user
+      - MYSQL_PASSWORD=${DB_PASSWORD:-mcps_password}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ../data/database:/docker-entrypoint-initdb.d:ro
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  redis-data:
+    driver: local
+  mariadb-data:
+    driver: local
+
+networks:
+  mcp-network:
+    driver: bridge

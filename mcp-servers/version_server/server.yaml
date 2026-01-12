@@ -1,0 +1,149 @@
+name: version_server
+version: 1.0.0
+description: 문서 버전 관리 Tool 제공
+
+# 서버 정보
+server:
+  type: mcp
+  protocol: stdio
+  language: python
+  main_file: main.py
+  class_name: VersionServer
+
+# 제공하는 Tool 목록
+tools:
+  - name: get_versions
+    description: 문서의 전체 버전 히스토리 조회
+    category: version
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: doc_id
+        type: string
+        required: true
+        description: 문서 ID
+    returns:
+      type: object
+      properties:
+        doc_id:
+          type: string
+        versions:
+          type: array
+          description: 버전 목록 (최신순)
+        total:
+          type: integer
+
+  - name: get_version
+    description: 특정 버전의 문서 내용 조회
+    category: version
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: doc_id
+        type: string
+        required: true
+        description: 문서 ID
+      - name: version
+        type: integer
+        required: true
+        description: 버전 번호
+    returns:
+      type: object
+      properties:
+        doc_id:
+          type: string
+        version:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: string
+        created_by:
+          type: string
+
+  - name: compare_versions
+    description: 두 버전 간 차이 비교 (diff)
+    category: version
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: doc_id
+        type: string
+        required: true
+        description: 문서 ID
+      - name: version1
+        type: integer
+        required: true
+        description: 비교할 버전 1
+      - name: version2
+        type: integer
+        required: true
+        description: 비교할 버전 2
+    returns:
+      type: object
+      properties:
+        doc_id:
+          type: string
+        version1:
+          type: integer
+        version2:
+          type: integer
+        diff:
+          type: object
+          description: 차이점 (added, removed, modified)
+
+# 의존성
+dependencies:
+  python: ">=3.10"
+  packages:
+    - pymysql==1.1.0
+    - pydantic==2.5.3
+    - difflib
+
+# 필요한 공유 모듈
+shared_modules:
+  - shared.database
+  - shared.mcp_protocol
+  - shared.logging_config
+  - shared.permissions
+  - mcp_tools.core.version_tools
+
+# 환경 변수
+environment:
+  - MARIADB_HOST
+  - MARIADB_PORT
+  - MARIADB_USER
+  - MARIADB_PASSWORD
+  - MARIADB_DATABASE
+
+# 로그 설정
+logging:
+  level: INFO
+  file: data/logs/mcp-servers/version_server.log
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 성능 지표
+performance:
+  startup_time: "<1s"
+  avg_response_time: "<200ms"
+  max_memory: "256MB"
+
+# 버전 관리 설정
+version_control:
+  max_versions_per_document: 100
+  retention_days: 365
+  auto_cleanup: true
+
+# 헬스체크
+health_check:
+  enabled: true
+  interval: 30
+  timeout: 5

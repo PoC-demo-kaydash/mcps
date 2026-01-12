@@ -1,0 +1,144 @@
+name: search_server
+version: 1.0.0
+description: Elasticsearch 기반 문서 검색 Tool 제공
+
+# 서버 정보
+server:
+  type: mcp
+  protocol: stdio
+  language: python
+  main_file: main.py
+  class_name: SearchServer
+
+# 제공하는 Tool 목록
+tools:
+  - name: search_documents
+    description: 문서 전문 검색
+    category: search
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: query
+        type: string
+        required: true
+        description: 검색 쿼리
+      - name: classification
+        type: string
+        required: false
+        description: 문서 등급 필터
+      - name: tags
+        type: array
+        required: false
+        description: 태그 필터
+      - name: from_date
+        type: string
+        required: false
+        description: 시작 날짜 (YYYY-MM-DD)
+      - name: to_date
+        type: string
+        required: false
+        description: 종료 날짜 (YYYY-MM-DD)
+      - name: page
+        type: integer
+        required: false
+        description: 페이지 번호 (기본 1)
+      - name: page_size
+        type: integer
+        required: false
+        description: 페이지 크기 (기본 20)
+    returns:
+      type: object
+      properties:
+        results:
+          type: array
+          description: 검색 결과 목록
+        total:
+          type: integer
+          description: 전체 결과 수
+        took:
+          type: integer
+          description: 검색 소요 시간(ms)
+        highlights:
+          type: object
+          description: 하이라이트 정보
+
+  - name: suggest_documents
+    description: 문서 자동완성/추천
+    category: search
+    parameters:
+      - name: user_id
+        type: string
+        required: true
+        description: 사용자 ID
+      - name: prefix
+        type: string
+        required: true
+        description: 검색 접두어
+      - name: limit
+        type: integer
+        required: false
+        description: 추천 개수 (기본 5)
+    returns:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          description: 추천 문서 목록
+
+# 의존성
+dependencies:
+  python: ">=3.10"
+  packages:
+    - elasticsearch==8.11.1
+    - pymysql==1.1.0
+    - pydantic==2.5.3
+
+# 필요한 공유 모듈
+shared_modules:
+  - shared.elasticsearch
+  - shared.database
+  - shared.mcp_protocol
+  - shared.logging_config
+  - shared.permissions
+  - mcp_tools.core.search_tools
+
+# 환경 변수
+environment:
+  - ES_HOST
+  - ES_USER
+  - ES_PASSWORD
+  - ES_INDEX_PREFIX
+  - ES_TIMEOUT
+  - MARIADB_HOST
+  - MARIADB_PORT
+  - MARIADB_USER
+  - MARIADB_PASSWORD
+  - MARIADB_DATABASE
+
+# 로그 설정
+logging:
+  level: INFO
+  file: data/logs/mcp-servers/search_server.log
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 성능 지표
+performance:
+  startup_time: "<1s"
+  avg_response_time: "<500ms"
+  max_memory: "256MB"
+
+# Elasticsearch 설정
+elasticsearch:
+  index: mcps_documents
+  refresh_interval: 30s
+  number_of_shards: 1
+  number_of_replicas: 1
+  max_result_window: 10000
+
+# 헬스체크
+health_check:
+  enabled: true
+  interval: 30
+  timeout: 5
